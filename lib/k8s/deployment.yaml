@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: polly-app
+  labels:
+    app: polly
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: polly
+  template:
+    metadata:
+      labels:
+        app: polly
+    spec:
+      serviceAccountName: polly-service-account
+      containers:
+      - name: polly-app
+        image: christianlaubach1/polly-app:latest  # Korrigierter Image-Name
+        ports:
+        - containerPort: 3000
+        env:
+        - name: AWS_REGION
+          valueFrom:
+            configMapKeyRef:
+              name: aws-config
+              key: AWS_REGION
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: aws-secret
+              key: AWS_ACCESS_KEY_ID
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: aws-secret
+              key: AWS_SECRET_ACCESS_KEY
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          initialDelaySeconds: 15
+          periodSeconds: 20
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "256m"
+          requests:
+            memory: "256Mi"
+            cpu: "128m"

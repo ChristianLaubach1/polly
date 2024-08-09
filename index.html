@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polly App</title>
+    <link rel="stylesheet" href="/style.css"> <!-- Verlinkung zu style.css -->
+</head>
+<body>
+    <h1>Text to Speech with AWS Polly</h1>
+    <form id="polly-form" action="/synthesize" method="POST">
+        <label for="text">Enter Text:</label>
+        <textarea id="text" name="text" rows="4" cols="50"></textarea><br><br>
+        <label for="voiceId">Choose Voice:</label>
+        <select id="voiceId" name="voiceId">
+            <option value="Joanna">Joanna</option>
+            <option value="Matthew">Matthew</option>
+            <option value="Ivy">Ivy</option>
+            <option value="Justin">Justin</option>
+        </select><br><br>
+        <button type="submit">Convert to Speech</button>
+    </form>
+    <h2>Output</h2>
+    <audio id="audio" controls></audio>
+
+    <script>
+        document.getElementById('polly-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+
+            fetch('/synthesize', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                const url = URL.createObjectURL(blob);
+                const audio = document.getElementById('audio');
+                audio.src = url;
+                audio.play();
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
