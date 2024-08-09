@@ -31,7 +31,7 @@ export class PipelineStack extends Stack {
           actions: [
             new codepipeline_actions.GitHubSourceAction({
               actionName: 'GitHub_Source',
-              owner: 'christianlaubach1',
+              owner: 'ChristianLaubach1',
               repo: 'polly',
               oauthToken: githubSecret.secretValue,
               output: sourceOutput,
